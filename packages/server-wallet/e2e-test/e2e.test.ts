@@ -1,3 +1,5 @@
+import {spawn} from 'child_process';
+
 import {Participant} from '@statechannels/client-api-schema';
 
 import {alice, bob} from '../src/wallet/__test__/fixtures/signing-wallets';
@@ -7,6 +9,7 @@ import {withSupportedState} from '../src/models/__test__/fixtures/channel';
 import {SigningWallet} from '../src/models/signing-wallet';
 import {truncate} from '../src/db-admin/db-admin-connection';
 import knexPing from '../src/db/connection';
+import {logger} from '../src/logger';
 
 import PingClient from './ping/client';
 import {killServer, startPongServer, waitForServerToStart, PongServer, knexPong} from './e2e-utils';
@@ -103,8 +106,24 @@ it('can update pre-existing channel, send signed state via http', async () => {
   // END SETUP
 
   // SCRIPT
-  const pingClient = new PingClient(alice().privateKey, `http://127.0.0.1:65535`);
-  await pingClient.ping(channelId);
+  const pingScript = spawn(
+    "NODE_ENV=test yarn ts-node ./e2e-test/scripts/ping --db ping --channels '0xf00'",
+    {stdio: 'pipe'}
+  );
+
+  pingScript.on('message', console.info);
+  pingScript.on('error', console.error);
+  pingScript.on('close', console.warn);
+
+  await new Promise(resolve =>
+    pingScript.on('exit', (code, signal) => {
+      logger.info({code, signal});
+      resolve();
+    })
+  );
+
+  await pingScript.kill();
+
   // END SCRIPT
 
   // EFFECTS
