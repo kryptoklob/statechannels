@@ -7,6 +7,7 @@ orbs:
 defaults: &defaults
   environment:
     USE_NATIVE_SOLC: false
+    PGUSER: root
     PSQL_ARGS: -p 5432 -h localhost
     NODE_ENV: test
   working_directory: /home/circleci/project
@@ -15,7 +16,6 @@ defaults: &defaults
     - image: geoknee/statechannels:node12.16-solc0.6.2 # Fast contract compilation with solc installed
     - image: circleci/postgres:12-alpine-ram # server-wallet uses a postgresql DB. alpine-ram is a minimal installation that runs in memory (ie. faster tests!)
       environment:
-        NODE_ENV: test
         POSTGRES_USER: root
 
 integration_test_settings: &integration_test_settings
