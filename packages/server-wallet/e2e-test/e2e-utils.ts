@@ -1,6 +1,5 @@
 import {spawn, ChildProcessWithoutNullStreams} from 'child_process';
 
-import kill = require('tree-kill');
 import axios from 'axios';
 
 import Knex = require('knex');
@@ -65,6 +64,7 @@ export const knexPong: Knex = Knex({
 });
 
 export const killServer = async ({server}: PongServer): Promise<void> => {
-  kill(server.pid);
+  server.kill();
+
   await knexPong.destroy();
 };
