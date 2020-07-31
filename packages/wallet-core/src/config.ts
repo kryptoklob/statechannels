@@ -36,7 +36,8 @@ export const HUB_ADDRESS: string =
 if (!process.env.HUB_DESTINATION) {
   console.warn('HUB_DESTINATION environment variable should be defined, you might see issues');
 }
-export const HUB_DESTINATION = process.env.HUB_DESTINATION as Destination;
+export const HUB_DESTINATION = (process.env.HUB_DESTINATION ||
+  '0x0000000000000000000000008199de05654e9afa5C081BcE38F140082C9a7733') as Destination;
 
 export const LOG_DESTINATION: string | undefined = process.env.LOG_DESTINATION
   ? process.env.LOG_DESTINATION === 'console'
