@@ -28,7 +28,6 @@ it('allows for two wallets to fund an app', async () => {
   );
 
   hookUpMessaging(playerA, playerB);
-  const channelId = '0x440b56b6c5b0adca1ee99e3926d1b123fd867566cfab5150479f9d5e9317fa1e';
 
   const createEvent = generateCreateChannelRequest(playerA.participant, playerB.participant);
   const isCreateChannelResponse = (m): m is CreateChannelResponse =>
@@ -46,8 +45,9 @@ it('allows for two wallets to fund an app', async () => {
   };
   playerA.channelWallet.workflows[0].service.onTransition(confirm);
 
-  const createResponse = await createPromise;
-  expect(createResponse.result.channelId).toEqual(channelId);
+  const {
+    result: {channelId}
+  } = await createPromise;
 
   const channelProposedNotification = await playerB.messagingService.outboxFeed
     .pipe(filter(isChannelProposed), first())
